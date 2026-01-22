@@ -5,4 +5,5 @@ This repo contains the code , generated reformulations and run files to reproduc
 ReformIR helps reduce drift in reformulations by prioritzing reformulations and documents. ReformIR is also interpretable and
 and example is given below:
 
-![alt text](qual_example.png)
+<img src="qual_example.jpg" alt="drawing" width="200"/>
+
