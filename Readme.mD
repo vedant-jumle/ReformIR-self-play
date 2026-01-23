@@ -21,7 +21,7 @@ and example is given below:
 1. Build indices: python3 code/build_indexes.py
 2. The generated reformulations are given in data folder. Just provide the right path based on results you want to reproduce and change mode to overwrite from reuse.
 3. The for instance if you want to reproduce genqr ensemble and genqr ensemble plus reform IR results from table 2 run:
-```python3 code/run_dl22.py --dl 22 --ce 4 --budget 50 --reformulation_file=data/genqr_ensemble/dl22.csv```
+```python3 code/run_dl22.py --dl 22 --ce 4 --budget 50 --reformulation_file=data/genqr_ensemble/dl22.csv``` <br/>
 for budget 100
 ```python3 code/run_dl22.py --dl 22 --ce 7 --budget 100 --reformulation_file=data/genqr_ensemble/dl22.csv```
 
