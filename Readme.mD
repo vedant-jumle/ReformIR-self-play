@@ -14,7 +14,9 @@ and example is given below:
 
 
 # To reproduce results 
-1. To reproduce the numbers in Tables 1 and 2 just specify the appropriate name in the run_dl19 or run_dl20 etc. script based on the test set you want to focus on.
+1. To reproduce the numbers in Tables 1 and 2 just specify the appropriate name in the run_dl19 or run_dl22 etc. script based on the test set you want to focus on.
+
+For instance if you want to reproduce qa expand at c=50 on dl22 sunstitute the corresponding run file names that can be found under runs/ in names=[] array and set mode to "reuse". 
 
 
 # To run the approaches from scratch without using runfiles 
