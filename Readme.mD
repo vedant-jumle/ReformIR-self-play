@@ -16,14 +16,16 @@ and example is given below:
 # To reproduce results 
 1. To reproduce the numbers in Tables 1 and 2 just specify the appropriate name in the run_dl19 or run_dl22 etc. script based on the test set you want to focus on.
 
-For instance if you want to reproduce qa expand at c=50 on dl22 sunstitute the corresponding run file names that can be found under runs/ in names=[] array and set mode to "reuse". 
+For instance if you want to reproduce qa expand at c=50 on dl22 substitute the corresponding run file names that can be found under runs/ in names=[] array and set mode to "reuse". 
 
 
 # To run the approaches from scratch without using runfiles 
 1. Build indices: python3 code/build_indexes.py
 2. The generated reformulations are given in data folder. Just provide the right path based on results you want to reproduce and change mode to overwrite from reuse.
-3. The for instance if you want to reproduce genqr ensemble and genqr ensemble plus reform IR results from table 2 run:
+3. The for instance if you want to reproduce genqr ensemble and genqr ensemble plus reform IR results from table 2 run: <br/>
+
 ```python3 code/run_dl22.py --dl 22 --ce 4 --budget 50 --reformulation_file=data/genqr_ensemble/dl22.csv``` <br/>
-for budget 100
+
+for budget 100 <br/>
 ```python3 code/run_dl22.py --dl 22 --ce 7 --budget 100 --reformulation_file=data/genqr_ensemble/dl22.csv```
 
