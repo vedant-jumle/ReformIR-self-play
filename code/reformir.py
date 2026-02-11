@@ -13,6 +13,7 @@ from sklearn.preprocessing import normalize
 logger = ir_datasets.log.easy()
 import torch
 from statistics import mean
+import scipy.stats
 import scipy
 import time
 
@@ -198,7 +199,8 @@ class ReformIR(pt.Transformer):
             df2 = dict(iter(df2.groupby(by='qid')))
             new_queries_docs = []
             new_queries_values = []
-            bm25_init = 1/(len(queries_new))
+            bm25_init = scipy.stats.truncnorm.rvs((0.95-0)/1,(1.0-0)/1,loc=0,scale=1,size=1).tolist()[0]/(len(queries_new)) # /(len(queries_new)))
+            
             bm25_lambdas = [bm25_init] * len(queries_new)
             bm25_lambdas.append(0.45)
             bm25_scores = dict(zip(df1[qid]['docno'].values, bm25_lambdas[-1] * df1[qid]['score'].values)) # initial results {docno: rel score}
