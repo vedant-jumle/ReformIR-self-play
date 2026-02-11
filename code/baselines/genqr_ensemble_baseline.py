@@ -65,7 +65,7 @@ class ReformRank(pt.Transformer):
         #     model="gpt-4o-mini",
 
         #     llm_config={
-        #         "api_key": "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",
+        #         "api_key": "<api-key>",
         #         "temperature": 0.5,
         #         "num_docs":3
         #     }
