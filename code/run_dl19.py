@@ -1,5 +1,5 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = os.environ.get("CUDA_VISIBLE_DEVICES", "0")
 import pyterrier as pt
 import pyterrier_alpha as pta
 from ir_measures import nDCG, R
@@ -33,13 +33,12 @@ args = parser.parse_args()
 dataset = pt.get_dataset("irds:msmarco-passage")
 device = torch.device('cuda' if torch.cuda.is_available() else "cpu")
 print(f"device: {device}")
-indexref  =  <path to bm25 index>
+indexref  =  os.path.join(os.environ["PYTERRIER_HOME"], "corpora", "msmarco_passage", "index", "terrier_stemmed_reverse")
 existing_index = pt.IndexFactory.of(indexref)
-expander_rm3 = pt.rewrite.RM3(indexref)
-retriever = pt.terrier.Retriever.from_dataset("msmarco_passage", "terrier_stemmed", wmodel="BM25")
-terrier_ = pt.terrier.Retriever.from_dataset("msmarco_passage", "terrier_stemmed", wmodel="BM25", num_results =100)
-reform_bm25 = pt.terrier.Retriever.from_dataset("msmarco_passage", "terrier_stemmed", wmodel="BM25", num_results = 100)
-bm25_cerberus = pt.terrier.Retriever.from_dataset("msmarco_passage", "terrier_stemmed", wmodel="BM25", num_results=args.budget)
+retriever = pt.terrier.Retriever(existing_index, wmodel="BM25")
+terrier_ = pt.terrier.Retriever(existing_index, wmodel="BM25", num_results=100)
+reform_bm25 = pt.terrier.Retriever(existing_index, wmodel="BM25", num_results=100)
+bm25_cerberus = pt.terrier.Retriever(existing_index, wmodel="BM25", num_results=args.budget)
 """
 We re-use the existing bm25 index.
 """

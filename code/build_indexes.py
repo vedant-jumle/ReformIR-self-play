@@ -1,25 +1,29 @@
-import torch
-from pyterrier_dr import FlexIndex, TasB, TctColBert, NumpyIndex
-import pyterrier as pt
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-import torch
-from pyterrier_dr import FlexIndex, TasB, TctColBert, NumpyIndex
+import os
 import pyterrier as pt
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# Build BM25 index from scratch with reverse docno lookup enabled.
+# Required by RM3 query expansion inside ReformIR.
+# Output: $PYTERRIER_HOME/corpora/msmarco_passage/index/terrier_stemmed_reverse/
 
-### to create bm25 index. The bm25 index will created at path like  "/home/user_name/.pyterrier/corpora/msmarco_passage/index/terrier_stemmed"
+index_path = os.path.join(
+    os.environ["PYTERRIER_HOME"],
+    "corpora", "msmarco_passage", "index", "terrier_stemmed_reverse"
+)
 
+if not os.path.exists(os.path.join(index_path, "data.properties")):
+    print(f"Building index at {index_path} ...")
+    dataset = pt.get_dataset("irds:msmarco-passage")
+    indexer = pt.IterDictIndexer(
+        index_path,
+        blocks=True,
+        fields=["text"],
+        meta={"docno": 26, "text": 4096},
+        meta_reverse=["docno"],
+    )
+    indexref = indexer.index(dataset.get_corpus_iter())
+    print(f"Done: {indexref}")
+else:
+    print(f"Index already exists at {index_path}, skipping build.")
+    indexref = pt.IndexRef.of(index_path)
 
-bm25 = pt.terrier.Retriever.from_dataset('msmarco_passage', 'terrier_stemmed', wmodel='BM25')
-### to build ms marco v2 bm25 terrier index. The bm25 index will created at path like  "/home/user_name/.pyterrier/corpora/msmarco_passage/index/terrier_stemmed". Alternatively the index can be downloaded as an artifact from HF.
-
-
-
-
-
-### to create bm25 index. The bm25 index will created at path like  "/home/user_name/.pyterrier/corpora/msmarco_passage/index/terrier_stemmed"
-
-
-bm25 = pt.terrier.Retriever.from_dataset('msmarcov2_passage', 'terrier_stemmed', wmodel='BM25')
+print("Index ref:", indexref)

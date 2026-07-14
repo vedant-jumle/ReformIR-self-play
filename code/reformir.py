@@ -39,7 +39,8 @@ class ReformIR(pt.Transformer):
         verbose: bool = True,
         terrier_index = None,
         bm25_retriever = None,
-        file_name="data/genqr_ensemble/dl19.csv"):
+        file_name="data/genqr_ensemble/dl19.csv",
+        weights_log_path: Optional[str] = None):
 
         self.scorer = scorer
         self.top_s = top_s
@@ -54,6 +55,7 @@ class ReformIR(pt.Transformer):
         self.backfill = backfill
         self.verbose = verbose
         self.reformulation_file = file_name
+        self.weights_log_path = weights_log_path
 
     def generate_rm3_query(self, qid,query, cluster_heads):
  
@@ -155,6 +157,7 @@ class ReformIR(pt.Transformer):
 
         #qrel_groups = list(dataset.get_qrels().groupby("qid"))
         times = []
+        weights_log = []
         for qid in qids:
             start = time.time()
             reformulated_queries = {"qid":[],"query": []}
@@ -353,6 +356,17 @@ class ReformIR(pt.Transformer):
                 iteration+=1   
 
             
+            if self.weights_log_path is not None:
+                weights_log.append({
+                    'qid': qid,
+                    'orig_query': query,
+                    **{f'reform_{i}': q for i, q in enumerate(queries_new)},
+                    **{f'w_{i}': bm25_lambdas[i] for i in range(len(queries_new))},
+                    'w_orig': bm25_lambdas[-1],
+                    'alpha': alpha,
+                    'delta': delta,
+                })
+
             result['qid'].append(np.full(len(scores), qid))
             result['query'].append(np.full(len(scores), query))
             result['rank'].append(np.arange(len(scores)))
@@ -376,6 +390,9 @@ class ReformIR(pt.Transformer):
                     result['score'].append(last_score - 1 - i)
                     result['iteration'].append(-1)
     
+        if self.weights_log_path is not None:
+            pd.DataFrame(weights_log).to_csv(self.weights_log_path, index=False)
+
         reformed_q = pd.DataFrame(reformed_queries)
         #reformed_q.to_csv("new_rewrite_genqr_ensemble_reformopt_DL21_qwen05b.csv",index=False)
         #reformed_q.to_csv("trec_covid_reformIR.csv",index=False)
