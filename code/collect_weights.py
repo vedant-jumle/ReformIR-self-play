@@ -7,13 +7,17 @@ from pyterrier_t5 import MonoT5ReRanker
 from reformir import ReformIR
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--dl", type=int, required=True, help="19, 20, 21, or 22")
+parser.add_argument("--dl", type=int, default=None, help="19 or 20 (TREC DL split); omit if using --topics_file")
+parser.add_argument("--topics_file", type=str, default=None, help="CSV with qid,query columns (e.g. msmarco train subset)")
 parser.add_argument("--budget", type=int, default=100)
 parser.add_argument("--batch", type=int, default=16)
 parser.add_argument("--ce", type=int, default=7, help="number of cross-encoder calls per query")
 parser.add_argument("--reformulation_file", type=str, required=True)
 parser.add_argument("--weights_out", type=str, required=True)
 args = parser.parse_args()
+
+if args.dl is None and args.topics_file is None:
+    raise ValueError("must provide --dl or --topics_file")
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"device: {device}")
@@ -26,8 +30,15 @@ existing_index = pt.IndexFactory.of(indexref)
 terrier_ = pt.terrier.Retriever(existing_index, wmodel="BM25", num_results=100)
 bm25_cerberus = pt.terrier.Retriever(existing_index, wmodel="BM25", num_results=args.budget)
 
-dataset = pt.get_dataset(f"irds:msmarco-passage/trec-dl-20{args.dl}/judged")
-scorer = pt.text.get_text(dataset, "text") >> MonoT5ReRanker(verbose=False, batch_size=args.batch)
+# text loader always from msmarco-passage (v1 index)
+corpus_dataset = pt.get_dataset("irds:msmarco-passage")
+scorer = pt.text.get_text(corpus_dataset, "text") >> MonoT5ReRanker(verbose=False, batch_size=args.batch)
+
+if args.topics_file is not None:
+    import pandas as pd
+    topics = pd.read_csv(args.topics_file, dtype=str)[["qid", "query"]]
+else:
+    topics = pt.get_dataset(f"irds:msmarco-passage/trec-dl-20{args.dl}/judged").get_topics()
 
 os.makedirs(os.path.dirname(os.path.abspath(args.weights_out)), exist_ok=True)
 
@@ -50,5 +61,5 @@ pipeline = RemoveColon() >> bm25_cerberus >> ReformIR(
     verbose=True,
 )
 
-pipeline.transform(dataset.get_topics())
+pipeline.transform(topics)
 print(f"Weights written to {args.weights_out}")
