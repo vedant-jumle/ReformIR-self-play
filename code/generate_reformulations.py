@@ -43,7 +43,7 @@ for q in tqdm(queries, desc="reformulating"):
         variants = [result.metadata["variant_outputs"][f"variant_{i+1}"]["raw_output"]
                     for i in range(5)]
         reformulated = "--".join(variants)
-        results.append({"qid": q.query_id, "query": reformulated})
+        results.append({"qid": q.query_id, "orig_query": q.text, "query": reformulated})
     except Exception as e:
         failed += 1
         print(f"Failed qid={q.query_id}: {e}")

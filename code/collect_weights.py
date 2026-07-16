@@ -36,7 +36,12 @@ scorer = pt.text.get_text(corpus_dataset, "text") >> MonoT5ReRanker(verbose=Fals
 
 if args.topics_file is not None:
     import pandas as pd
-    topics = pd.read_csv(args.topics_file, dtype=str)[["qid", "query"]]
+    _t = pd.read_csv(args.topics_file, dtype=str)
+    # if orig_query column present (from generate_reformulations.py), use it
+    if "orig_query" in _t.columns:
+        topics = _t[["qid", "orig_query"]].rename(columns={"orig_query": "query"})
+    else:
+        topics = _t[["qid", "query"]]
 else:
     topics = pt.get_dataset(f"irds:msmarco-passage/trec-dl-20{args.dl}/judged").get_topics()
 
