@@ -5,6 +5,8 @@
 #SBATCH --mem=32G
 #SBATCH --gpus=1
 #SBATCH --output=/tudelft.net/staff-groups/ewi/st/reformir-self-play/logs/collect_weights_%j.log
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=vedantjumle@gmail.com
 
 set -euo pipefail
 
