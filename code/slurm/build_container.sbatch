@@ -22,6 +22,6 @@ export APPTAINER_CACHEDIR=/tmp/vvjumle-apptainer-cache
 mkdir -p "$APPTAINER_TMPDIR" "$APPTAINER_CACHEDIR"
 
 echo "Building $SIF from $DEF ..."
-apptainer build --ignore-fakeroot-command "$SIF" "$DEF"
+apptainer build --force --ignore-fakeroot-command "$SIF" "$DEF"
 echo "Done: $SIF"
 ls -lh "$SIF"
