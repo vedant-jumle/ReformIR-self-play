@@ -4,6 +4,8 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --output=/tudelft.net/staff-groups/ewi/st/reformir-self-play/logs/build_container_%j.log
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=vedantjumle@gmail.com
 
 set -euo pipefail
 
