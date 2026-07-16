@@ -15,9 +15,11 @@ SIF=$SHARED/reformir.sif
 CODE=$SHARED/ReformIR-self-play/code
 LOCAL=/tmp/vvjumle-reformir-dpo
 
-mkdir -p "$LOCAL/output"
+mkdir -p "$LOCAL/output" "$LOCAL/hf_cache"
 
 apptainer exec --nv --bind /tudelft.net --pwd "$LOCAL" \
+  --env HF_HOME="$LOCAL/hf_cache" \
+  --env TRANSFORMERS_CACHE="$LOCAL/hf_cache" \
   "$SIF" python "$CODE/train_dpo.py" \
     --dpo_data "$SHARED/ReformIR-self-play/data/dpo/msmarco_train_1k_dpo.jsonl" \
     --model_name "google/flan-t5-large" \
