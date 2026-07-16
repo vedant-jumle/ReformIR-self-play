@@ -5,7 +5,7 @@
 #SBATCH --mem=16G
 #SBATCH --output=/tudelft.net/staff-groups/ewi/st/reformir-self-play/logs/build_container_%j.log
 #SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=vedantjumle@gmail.com
+#SBATCH --mail-user=v.v.jumle@student.tudelft.nl
 
 set -euo pipefail
 
